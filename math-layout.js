@@ -1,0 +1,11 @@
+/* Display complete mathematical expressions without changing lesson step counts. */
+(()=>{
+const atom=String.raw`(?:\d+(?:,\d+)?|[xABC])(?:\s*%)?`;
+const frac=String.raw`(?:${atom}\s*\/\s*${atom}|${atom})`;
+const term=String.raw`(?:\(\s*${frac}(?:\s*[×÷+−-]\s*${frac})*\s*\)|${frac})`;
+const expr=new RegExp(String.raw`(?<![\p{L}\d])${term}(?:\s*[×÷=+−-]\s*${term})+(?:\s*(?:€(?:\/\p{L}+)?|piezas|páginas|días|minutos|min|jornadas|horas-persona|horas|alumnos|L(?:\/km)?|m|h)(?!\p{L}))?|(?<![\p{L}\d])${atom}\s*\/\s*${atom}(?![\p{L}\d])`,'gu');
+function tex(s){return s.replace(/(\d),(\d)/g,'$1{,}$2').replace(/(\d+(?:\{,\}\d+)?|[xABC])\s*\/\s*(\d+(?:\{,\}\d+)?|[xABC])/g,'\\frac{$1}{$2}').replace(/\s*(€(?:\/\p{L}+)?|piezas|páginas|días|minutos|min|jornadas|horas-persona|horas|alumnos|L(?:\/km)?|m|h)$/u,(_,u)=>'\\;\\text{'+u+'}').replaceAll('×','\\times ').replaceAll('÷','\\div ').replaceAll('−','-').replaceAll('%','\\%');}
+function format(root){if(root.dataset.displayMath)return;root.dataset.displayMath='1';const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);const nodes=[];while(walker.nextNode())if(!walker.currentNode.parentElement.closest('strong, mjx-container, svg, .display-operation'))nodes.push(walker.currentNode);for(const n of nodes){const raw=n.nodeValue;expr.lastIndex=0;let m,last=0;const f=document.createDocumentFragment();while((m=expr.exec(raw))){f.append(raw.slice(last,m.index));const span=document.createElement('span');span.className='display-operation';span.textContent=m[0];const t=tex(m[0]);const draw=()=>{if(span.isConnected)try{span.replaceChildren(MathJax.tex2svg(t,{display:true}))}catch(e){console.warn(e)}};if(window.MathJax?.tex2svg){try{span.replaceChildren(MathJax.tex2svg(t,{display:true}))}catch(e){console.warn(e)}}else window.MathJax?.startup?.promise?.then(draw);f.append(span);last=expr.lastIndex;}if(last){f.append(raw.slice(last));n.replaceWith(f)}}}
+function update(){if(current>=48)return;document.querySelectorAll('#boardContent .prose-line, #practiceHints .practice-hint, #teacherSolution p').forEach(format)}
+const base=render;render=function(){base();update()};document.getElementById('showPracticeHint').addEventListener('click',update);document.getElementById('resetPracticeHints').addEventListener('click',update);update();
+})();

@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Aula IA v8 · Proporcionalidad y polinomios</title>
+    <link rel="stylesheet" href="styles.css">
+    <script>window.MathJax = {startup: {typeset: false}, options: {enableAssistiveMml: false}, svg: {fontCache: 'none'}};</script>
+    <script defer src="vendor/tex-svg.js"></script>
+    <script defer src="lesson-data.js"></script>
+    <script defer src="practice-data.js"></script>
+    <script defer src="practice-init.js"></script>
+    <script defer src="app.js"></script>
+    <script defer src="enhancements.js"></script>
+    <script defer src="v3.js"></script>
+    <script defer src="v4.js"></script>
+    <script defer src="v5.js"></script>
+    <script defer src="practice-ui.js"></script>
+    <script defer src="math-layout.js"></script>
+    <script defer src="algebra-layout.js"></script>
+</head>
+
+<body>
+    <header>
+        <div class="brand"><img src="assets/logo-carol.png" alt="Logo de Carol"><strong>Aula Matemáticas<small>Matemáticas ·
+                    ESO</small></strong></div><span id="topicHeading">Matemáticas · 3.º y 4.º ESO ·
+            Proporcionalidad</span><button id="fullscreen">⛶ Pantalla completa</button>
+    </header>
+    <main>
+        <aside class="sidebar"><label class="topic-label" for="topicSelect">Tema de clase</label><select
+                id="topicSelect" aria-label="Seleccionar tema"></select>
+            <div id="steps"></div>
+            <div class="sidebar-brand"><img src="assets/logo-carol.png" alt="FyQ con Carolina"></div>
+        </aside>
+        <section class="workspace">
+            <div class="toolbar"><button id="prev">← Anterior</button><span id="counter"></span><button
+                    id="next">Siguiente →</button><button id="reveal">Revelar siguiente subpaso</button><button
+                    id="reset">Reiniciar paso</button><button id="playAuto">▶ Auto</button><label class="compact">Ritmo
+                    <select id="autoSpeed">
+                        <option value="4000">4 s</option>
+                        <option value="7000" selected>7 s</option>
+                        <option value="11000">11 s</option>
+                    </select></label></div>
+            <div id="lessonTabs" role="tablist" aria-label="Apartados abiertos"></div>
+            <div id="emptyLesson">Selecciona un apartado del menú para abrirlo en la pizarra.</div>
+            <div class="board" id="board">
+                <div class="board-title" id="boardTitle"></div>
+                <div id="boardContent"></div>
+                <div id="drawingOverlay"><canvas id="ink"></canvas></div>
+                <div id="inkDock"><button id="toggleInk" aria-expanded="false">✎ Anotar sobre pizarra
+                        <span>⌄</span></button>
+                    <div id="inkTools" class="tools ink-tools hidden" aria-label="Herramientas de anotación"><button
+                            id="inkPen" class="active">✎ Lápiz</button><button id="inkErase">⌫ Borrador</button>
+                        <div class="ink-swatches" aria-label="Colores rápidos"><button data-ink-color="#7042b5"
+                                style="--swatch:#7042b5" title="Morado" aria-label="Morado"></button><button
+                                data-ink-color="#202638" style="--swatch:#202638" title="Negro"
+                                aria-label="Negro"></button><button data-ink-color="#e34b56" style="--swatch:#e34b56"
+                                title="Rojo" aria-label="Rojo"></button><button data-ink-color="#2467d6"
+                                style="--swatch:#2467d6" title="Azul" aria-label="Azul"></button><button
+                                data-ink-color="#159b78" style="--swatch:#159b78" title="Verde"
+                                aria-label="Verde"></button><button data-ink-color="#d6a100" style="--swatch:#d6a100"
+                                title="Amarillo" aria-label="Amarillo"></button></div><label>Color <input type="color"
+                                id="inkColor" value="#7042b5"></label><label>Grosor <input type="range" id="inkSize"
+                                min="2" max="24" value="4"><output id="inkSizeValue">4 px</output></label><button
+                            id="inkUndo">↶ Deshacer</button><button id="inkRedo">↷ Rehacer</button><button
+                            id="inkClear">Limpiar anotaciones</button>
+                    </div>
+                </div>
+            </div>
+            <div class="controls"><button id="toggleFree">▤ Pizarra libre</button><button id="toggleScript">☷ Guion del
+                    profesor</button><button id="download">↓ Exportar anotaciones</button><button id="zoomOut">−
+                    Zoom</button><strong id="zoomLabel">100%</strong><button id="zoomIn">+ Zoom</button><button
+                    id="speak">🔊 Leer guion</button><button id="stopSpeak">■ Detener voz</button></div>
+            <section class="free hidden" id="freePanel">
+                <div class="freeTop"><strong>Pizarra libre</strong><span>Ratón · dedo · lápiz digital</span></div>
+                <div class="tools"><button data-tool="pen" class="active">✎ Lápiz</button><button data-tool="eraser">⌫
+                        Borrador</button><button data-tool="line">╱ Línea</button><button data-tool="rect">▢
+                        Rectángulo</button><button data-tool="circle">◯ Círculo</button><button data-tool="arrow">➜
+                        Flecha</button><button data-tool="text">T Texto</button><label>Color <input type="color"
+                            id="color" value="#7042b5"></label><label>Grosor <input type="range" id="size" min="2"
+                            max="24" value="4"></label><button id="undo">↶</button><button id="redo">↷</button><button
+                        id="clear">Limpiar</button><button id="saveFree">Guardar PNG</button><button id="formulaBtn">∑
+                        Fórmula</button><button id="saveSession">Guardar sesión</button><button
+                        id="loadSession">Recuperar sesión</button></div>
+                <div class="canvasWrap">
+                    <div id="formulaOverlay"></div><canvas id="freeCanvas" width="1200" height="520"></canvas>
+                </div>
+            </section>
+            <section class="script" id="scriptPanel">
+                <div class="scripthead">
+                    <h2>Guion para explicar al alumno</h2><span id="scriptLabel"></span>
+                </div>
+                <p id="scriptText"></p>
+                <div class="hint" id="hint"></div>
+                <p class="microcopy">Atajos: ←/→ cambiar paso · Espacio revelar · Ctrl+Z deshacer. La voz usa el
+                    sintetizador del navegador.</p>
+            </section>
+        </section>
+    </main>
+    <footer>Prototipo local sin IA conectada · Las explicaciones y los dibujos son reproducibles y controlados por el
+        profesor.</footer>
+</body>
+
+</html>
